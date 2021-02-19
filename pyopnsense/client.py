@@ -73,14 +73,14 @@ class OPNClient(object):
         """
         return '{}/{}'.format(self.base_url, endpoint)
 
-    def _get(self, endpoint):
+    def _get(self, endpoint, **extra_params):
         req_url = self._build_request_url(endpoint)
-        params = self._build_request_params()
+        params = self._build_request_params(**extra_params)
         response = requests.get(req_url, **params)
         return self._process_response(response)
 
-    def _post(self, endpoint, body):
+    def _post(self, endpoint, body, **extra_params):
         req_url = self._build_request_url(endpoint)
-        params = self._build_request_params(data=body)
+        params = self._build_request_params(data=body, **extra_params)
         response = requests.post(req_url, **params)
         return self._process_response(response)
