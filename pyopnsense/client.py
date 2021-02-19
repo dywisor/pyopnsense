@@ -31,12 +31,14 @@ HTTP_SUCCESS = (200, 201, 202, 203, 204, 205, 206, 207)
 class OPNClient(object):
     """Representation of the OPNsense API client."""
 
-    def __init__(self, api_key, api_secret, base_url, verify_cert=False):
+    def __init__(self, api_key, api_secret, base_url,
+                 verify_cert=False, extra_params=None):
         """Initialize the OPNsense API client."""
         self.api_key = api_key
         self.api_secret = api_secret
         self.base_url = base_url
         self.verify_cert = verify_cert
+        self.extra_params = extra_params
 
     def _process_response(self, response):
         """Handle the response."""
@@ -59,6 +61,9 @@ class OPNClient(object):
             'auth':    (self.api_key, self.api_secret),
             'timeout': DEFAULT_TIMEOUT
         }
+
+        if self.extra_params:
+            params.update(self.extra_params)
 
         params.update(extra_params)
         return params
