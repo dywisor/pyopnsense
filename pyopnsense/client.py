@@ -63,14 +63,24 @@ class OPNClient(object):
         params.update(extra_params)
         return params
 
+    def _build_request_url(self, endpoint):
+        """Constructs the request URL for the given endpoint.
+
+        :param str endpoint: API endpoint (relative request path)
+
+        :returns: request URL
+        :rtype: str
+        """
+        return '{}/{}'.format(self.base_url, endpoint)
+
     def _get(self, endpoint):
-        req_url = '{}/{}'.format(self.base_url, endpoint)
+        req_url = self._build_request_url(endpoint)
         params = self._build_request_params()
         response = requests.get(req_url, **params)
         return self._process_response(response)
 
     def _post(self, endpoint, body):
-        req_url = '{}/{}'.format(self.base_url, endpoint)
+        req_url = self._build_request_url(endpoint)
         params = self._build_request_params(data=body)
         response = requests.post(req_url, **params)
         return self._process_response(response)
