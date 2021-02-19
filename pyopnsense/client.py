@@ -46,16 +46,31 @@ class OPNClient(object):
             raise exceptions.APIException(
                 status_code=response.status_code, resp_body=response.text)
 
+    def _build_request_params(self, **extra_params):
+        """Builds a new dictionary containing request parameters.
+        The dictionary will contain both common (bound to self)
+        and user-supplied parameters, with the latter taking precedence.
+
+        :returns: dict with request parameters
+        :rtype: dict
+        """
+        params = {
+            'verify':  self.verify_cert,
+            'auth':    (self.api_key, self.api_secret),
+            'timeout': DEFAULT_TIMEOUT
+        }
+
+        params.update(extra_params)
+        return params
+
     def _get(self, endpoint):
         req_url = '{}/{}'.format(self.base_url, endpoint)
-        response = requests.get(req_url, verify=self.verify_cert,
-                                auth=(self.api_key, self.api_secret),
-                                timeout=DEFAULT_TIMEOUT)
+        params = self._build_request_params()
+        response = requests.get(req_url, **params)
         return self._process_response(response)
 
     def _post(self, endpoint, body):
         req_url = '{}/{}'.format(self.base_url, endpoint)
-        response = requests.post(req_url, data=body, verify=self.verify_cert,
-                                 auth=(self.api_key, self.api_secret),
-                                 timeout=DEFAULT_TIMEOUT)
+        params = self._build_request_params(data=body)
+        response = requests.post(req_url, **params)
         return self._process_response(response)
